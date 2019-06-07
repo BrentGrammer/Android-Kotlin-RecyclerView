@@ -20,11 +20,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.android.trackmysleepquality.R
 import com.example.android.trackmysleepquality.database.SleepDatabase
 import com.example.android.trackmysleepquality.databinding.FragmentSleepTrackerBinding
@@ -61,7 +63,15 @@ class SleepTrackerFragment : Fragment() {
 
         binding.sleepTrackerViewModel = sleepTrackerViewModel
 
-        val adapter = SleepNightAdapter()
+        // Creating a GridLayout Manager for use with RecyclerView
+        val manager = GridLayoutManager(activity, 3)
+        // tell recyclerview in binding object to use the gridlayout mangager:
+        binding.sleepList.layoutManager = manager
+
+        // this passes a lambda callback for the clicklistener back to the adapter to pass down to the view holder which will eventually notify the View Model of the click so it can handle it
+        val adapter = SleepNightAdapter(SleepNightListener { nightId ->
+            Toast.makeText(context, "${nightId}", Toast.LENGTH_LONG).show()
+        })
         // references the id of the RecyclerView and assigns an adapter to it:
         binding.sleepList.adapter = adapter
 

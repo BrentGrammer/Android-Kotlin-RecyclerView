@@ -21,14 +21,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.android.trackmysleepquality.R
-import com.example.android.trackmysleepquality.convertDurationToFormatted
-import com.example.android.trackmysleepquality.convertNumericQualityToString
 import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
 
-class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
+// adapter class will receive a clickListener from the fragment for clicking on a list item
+class SleepNightAdapter(val clickListener: SleepNightListener) : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
 
     // sets the position of list to display viewholder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -37,7 +35,7 @@ class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
         val item = getItem(position)
         // updating and modifying the views is delegated to the ViewHolder
         // this hides the details of how to handle the view so the Adapter doesn't have to worry about them.
-        holder.bind(item)
+        holder.bind(item, clickListener)
     }
 
     // onCreateViewHolder returns the ViewHolder defined in this class
@@ -54,10 +52,12 @@ class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
     class ViewHolder private constructor(val binding: ListItemSleepNightBinding): RecyclerView.ViewHolder(binding.root) {
 
         // this extension function was created to support using more than one view in onBindViewHolder
-        fun bind(item: SleepNight) {
+        fun bind(item: SleepNight, clickListener: SleepNightListener) {
             // Tell binding object about new list item
             // sleep is the variable name you gave to the item in the <data><variable> block in the list item layout xml as the view to use with the ViewHolder
             binding.sleep = item
+            // getting the click listener passed into adapter from the view to get it to each ViewHolder and let data binding know about it:
+            binding.clickListener = clickListener
             // always execute pending bindings as an optimization when using binding adapters with a recycler view:
             binding.executePendingBindings()
         }
@@ -93,4 +93,11 @@ class SleepNightDiffCallback : DiffUtil.ItemCallback<SleepNight>() {
         return oldItem == newItem
     }
 
+}
+
+// Click Listener class to listen for clicks and notify the ViewModel with passed on data for handling them.
+// When user selected an item the onClick method will be triggered with the selected item - this callback will be used to have the ViewHolder inform the Fragment that a click happened
+// This class is essentially a fancy way of defining and allowing the passing of a lambda(from the fragment) to the Adapter class and does not need to hold a reference to the view
+class SleepNightListener(val clickListener: (sleepId: Long) -> Unit) {
+    fun onClick(night: SleepNight) = clickListener(night.nightId)
 }
