@@ -55,19 +55,11 @@ class SleepNightAdapter : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(
 
         // this extension function was created to support using more than one view in onBindViewHolder
         fun bind(item: SleepNight) {
-            val res = itemView.context.resources
-            binding.sleepLength.text = convertDurationToFormatted(item.startTimeMilli, item.endTimeMilli, res)
-            binding.qualityString.text = convertNumericQualityToString(item.sleepQuality, res)
-
-            binding.qualityImage.setImageResource(when (item.sleepQuality) {
-                0 -> R.drawable.ic_sleep_0
-                1 -> R.drawable.ic_sleep_1
-                2 -> R.drawable.ic_sleep_2
-                3 -> R.drawable.ic_sleep_3
-                4 -> R.drawable.ic_sleep_4
-                5 -> R.drawable.ic_sleep_5
-                else -> R.drawable.ic_sleep_active
-            })
+            // Tell binding object about new list item
+            // sleep is the variable name you gave to the item in the <data><variable> block in the list item layout xml as the view to use with the ViewHolder
+            binding.sleep = item
+            // always execute pending bindings as an optimization when using binding adapters with a recycler view:
+            binding.executePendingBindings()
         }
 
         // method to inflate view so onCreateViewHolder doesn't have to know about details is put in companion object to be able to call it off of the class instead of an instance of the class
