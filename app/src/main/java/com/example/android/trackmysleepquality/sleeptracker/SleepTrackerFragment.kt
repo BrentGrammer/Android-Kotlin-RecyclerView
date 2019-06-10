@@ -69,8 +69,9 @@ class SleepTrackerFragment : Fragment() {
         binding.sleepList.layoutManager = manager
 
         // this passes a lambda callback for the clicklistener back to the adapter to pass down to the view holder which will eventually notify the View Model of the click so it can handle it
+        // because SleepNightListener only takes a function in it's contructor parameters, you can omit the parens and inline the function in brackets
         val adapter = SleepNightAdapter(SleepNightListener { nightId ->
-            Toast.makeText(context, "${nightId}", Toast.LENGTH_LONG).show()
+            sleepTrackerViewModel.onSleepNightClicked(nightId)
         })
         // references the id of the RecyclerView and assigns an adapter to it:
         binding.sleepList.adapter = adapter
@@ -118,6 +119,14 @@ class SleepTrackerFragment : Fragment() {
                 // Reset state to make sure we only navigate once, even if the device
                 // has a configuration change.
                 sleepTrackerViewModel.doneNavigating()
+            }
+        })
+
+        sleepTrackerViewModel.navigateToSleepDataQuality.observe(this, Observer {night ->
+            night?.let {
+                this.findNavController().navigate(SleepTrackerFragmentDirections
+                        .actionSleepTrackerFragmentToSleepDetailFragment(night))
+                sleepTrackerViewModel.onSleepQualityDataNavigated()
             }
         })
 

@@ -25,10 +25,10 @@ import com.example.android.trackmysleepquality.database.SleepNight
 import com.example.android.trackmysleepquality.databinding.ListItemSleepNightBinding
 
 
-// adapter class will receive a clickListener from the fragment for clicking on a list item
+// adapter class will receive a list item clickListener from the fragment for clicking on a list item
 class SleepNightAdapter(val clickListener: SleepNightListener) : ListAdapter<SleepNight, SleepNightAdapter.ViewHolder>(SleepNightDiffCallback()) {
 
-    // sets the position of list to display viewholder
+    // sets the position/index of list to display viewholder
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // position is passed by RecyclerView for use here
         // getItem is a helper provided by ListAdapter

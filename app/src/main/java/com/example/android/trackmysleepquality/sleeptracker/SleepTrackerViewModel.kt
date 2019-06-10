@@ -235,4 +235,18 @@ class SleepTrackerViewModel(
         super.onCleared()
         viewModelJob.cancel()
     }
+
+    private val _navigateToSleepDataQuality = MutableLiveData<Long>()
+    val navigateToSleepDataQuality
+        get() = _navigateToSleepDataQuality
+
+    // this is the function called from the view when a list item is clicked in the recyclerview:
+    // This will trigger navigation
+    fun onSleepNightClicked(id: Long) {
+        _navigateToSleepDataQuality.value = id
+    }
+
+    fun onSleepQualityDataNavigated () {
+        _navigateToSleepDataQuality.value = null
+    }
 }
